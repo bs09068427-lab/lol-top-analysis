@@ -37,7 +37,7 @@ METRICS = [
     ("wards_pre14", "14分までのワード設置数", True, True),
     ("control_wards_bought", "コントロールワード購入数", True, True),
     ("vision_score_pm", "分間視界スコア", True, True),
-    ("plates", "タワープレート獲得数", True, True),
+    ("plates", "チームのタワープレート獲得数", True, True),
     ("solo_kills", "ソロキル数", True, True),
     ("objective_participation", "オブジェクト参加率", True, True),
     ("early_top_objective_participation", "グラブ/ヘラルド参加率", True, True),
@@ -51,7 +51,8 @@ def setup_font():
     for cand in ("Noto Sans CJK JP", "Noto Sans JP", "IPAexGothic", "WenQuanYi Zen Hei"):
         if cand in names:
             plt.rcParams["font.family"] = cand
-            return
+            break
+    plt.rcParams["axes.unicode_minus"] = False
 
 
 def cohens_d(a, b):

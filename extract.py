@@ -33,8 +33,9 @@ def zone(team_id, x, y):
 
 
 def normalize(team_id, x, y):
-    """赤側の座標を反転し、全員を青側視点にそろえる。"""
-    return (MAP_SIZE - x, MAP_SIZE - y) if team_id == 200 else (x, y)
+    """赤側の座標を川（x+y=MAP_SIZE）で鏡映し、全員を青側視点にそろえる。
+    マップはこの対角線で線対称なので、トップレーンはどちらのチームでも左上に来る。"""
+    return (MAP_SIZE - y, MAP_SIZE - x) if team_id == 200 else (x, y)
 
 
 def frame_stat(frames, minute, pid, key):
@@ -101,7 +102,7 @@ def lane_rows(match, timeline, tier, patch):
             "vision_score_pm": p["visionScore"] / duration_min,
             "control_wards_bought": p.get("visionWardsBoughtInGame"),
             "solo_kills": ch.get("soloKills"),
-            "plates": ch.get("turretPlatesTaken"),
+            "plates": ch.get("turretPlatesTaken"),  # チーム全体のプレート数
             "kill_participation": ch.get("killParticipation"),
             "lane_cs_10_challenge": ch.get("laneMinionsFirst10Minutes"),
             "has_teleport": int(TELEPORT_ID in (p.get("summoner1Id"), p.get("summoner2Id"))),
