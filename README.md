@@ -67,3 +67,17 @@ python3 analyze.py --data-dir /tmp/fake/data --out /tmp/fake/out
 lol-top-analysis isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games
 or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all
 associated properties are trademarks or registered trademarks of Riot Games, Inc.
+
+## リプレイの自動録画（自分のPCで実行）
+
+1. `python3 scenes.py` で `output/scenes.csv` を作る（ゲーム内の名前を含むのでリポジトリには入れない）
+2. LoL クライアントにログインした状態のPCで:
+
+```bash
+pip install requests
+python tools/record_replays.py --setup      # 初回のみ: Replay API を有効化
+python tools/record_replays.py --check      # クライアントに接続できるか確認
+python tools/record_replays.py scenes.csv --only 1 --out recordings
+```
+
+リプレイは同じパッチの試合しか再生できない。録画中はPCを操作しないこと。

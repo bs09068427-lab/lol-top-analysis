@@ -20,6 +20,11 @@ PLATE_WINDOW_MS = 120_000
 ISOLATED_DISTANCE = 4000
 
 
+def to_sec(text):
+    m, s = text.split(":")
+    return int(m) * 60 + int(s)
+
+
 def fmt_time(ms):
     s = max(0, int(ms // 1000))
     return f"{s // 60}:{s % 60:02d}"
@@ -57,7 +62,7 @@ def scan(match, timeline, tier):
         pid, team = p["participantId"], p["teamId"]
         opp = tops[1] if p is tops[0] else tops[0]
         team_pids = [q for q, v in parts.items() if v["teamId"] == team]
-        who = {**base, "player": riot_id(p), "champion": p["championName"], "opponent": opp["championName"],
+        who = {**base, "player": riot_id(p), "player_name": p.get("riotIdGameName", ""), "champion": p["championName"], "opponent": opp["championName"],
                "side": side(team), "win": "勝ち" if p["win"] else "負け"}
 
         # A: 14分までに対面をキル → 2分以内に自分でプレート
@@ -151,6 +156,17 @@ def main():
                          f"{r['side']} | {r['win']} | {r['start']}〜{r['end']} | {r['note']} | {r['match_id']} |")
         lines.append("")
     (out / "scenes.md").write_text("\n".join(lines))
+
+    # 録画スクリプト (tools/record_replays.py) 用。カメラを合わせるためにゲーム内の名前だけ残す
+    n = 0
+    with (out / "scenes.csv").open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["no", "theme", "game_id", "start_sec", "end_sec", "champion", "player_name"])
+        for _, items in sections:
+            for r in items:
+                n += 1
+                w.writerow([n, r["theme"], r["match_id"].split("_")[1], to_sec(r["start"]),
+                            to_sec(r["end"]), r["champion"], r["player_name"]])
     print(f"{n} 場面を書き出しました: {out / 'scenes.md'}")
 
 
